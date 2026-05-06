@@ -6,25 +6,12 @@ from src.domain.models import CategorizationResult
 
 router = APIRouter(prefix="/api/v1", tags=["Analyze"])
 
-# --- Mock Implementations for EPIC 1 ---
-class MockExtractor(IWebContentExtractor):
-    async def extract_text(self, url: str):
-        if "error" in url:
-            raise Exception("Mock extract error")
-        return "Mock Title", "Mock Text Content"
-
-class MockAnalyzer(ILLMAnalyzer):
-    async def analyze(self, title: str, text: str) -> CategorizationResult:
-        return CategorizationResult(
-            title=title,
-            summary="This is a mock summary.",
-            categories=["MockCategory1", "MockCategory2"]
-        )
+from src.infrastructure.extractor.html_extractor import BeautifulSoupExtractor
+from src.infrastructure.llm.openai_analyzer import LMStudioOpenAIAnalyzer
 
 def get_analyze_usecase() -> AnalyzeUrlUseCase:
-    # Later, this will inject the real dependencies
-    extractor = MockExtractor()
-    analyzer = MockAnalyzer()
+    extractor = BeautifulSoupExtractor()
+    analyzer = LMStudioOpenAIAnalyzer()
     return AnalyzeUrlUseCase(extractor, analyzer)
 
 @router.post("/analyze", response_model=AnalyzeResponse)
