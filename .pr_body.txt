@@ -1,0 +1,16 @@
+## 概要 (Summary)
+URL解析APIにおけるLLM連携機能を実装し、コンテンツ抽出からAPIエンドポイントまでの全体統合を行いました。抽出したテキストをLM StudioのOpenAI API互換インターフェースへ送信し、要約とカテゴリをJSON形式で返却する機能となります。
+
+## 変更点 (Changes)
+- `AsyncOpenAI` を利用したLLM連携クラス `LMStudioOpenAIAnalyzer` の実装（プロンプトおよびJSONパースのフェイルセーフ追加）
+- FastAPIルーターにおいて、モック処理を本番用実装（BeautifulSoupExtractor, LMStudioOpenAIAnalyzer）へ差し替え
+- LLMへのリクエスト時にコンテキスト上限を考慮したテキストのトランケート処理（先頭4000文字）の実装
+- APIテストにおいて `app.dependency_overrides` を活用し、安定したテスト実行環境の構築
+- その他、プロジェクトの依存ファイル整理や `.gitignore` の設定追加
+
+## レビューのポイント (Focus Areas)
+- LM StudioからのJSONフォーマット推論が不正だった場合のエラーハンドリング（フォールバック）の妥当性
+- SSRF対策として実装されたURL検証ロジックと、BeautifulSoupによるテキスト抽出時の正規化処理
+
+## 関連Issue (References)
+- Closes #13
